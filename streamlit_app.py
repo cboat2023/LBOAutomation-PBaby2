@@ -2,7 +2,7 @@ import openpyxl
 import json
 import openai
 import streamlit as st
-
+import os
 
 class ExcelLBOAssistant:
     def __init__(self, template_path):
@@ -43,8 +43,8 @@ class ExcelLBOAssistant:
     def save(self, output_path):
         self.workbook.save(output_path)
 
-# Sample GPT integration
 openai.api_key = st.secrets["OPENAI"]["OPENAI_API_KEY"]
+client = openai.OpenAI(api_key=openai.api_key)  # or just openai.OpenAI() if globally set
 
 assistant = ExcelLBOAssistant("TJC Practice Simple Model New (7) (2).xlsx")
 metadata = assistant.get_metadata()
@@ -55,7 +55,9 @@ messages = [
     {"role": "user", "content": "Check if there are any formula errors or unfilled EBITDA cells. Ask me which version of EBITDA to use if multiple exist."}
 ]
 
-response = openai.ChatCompletion.create(
+client = openai.OpenAI()
+
+response = client.chat.completions.create(
     model="gpt-4",
     messages=messages,
     temperature=0
