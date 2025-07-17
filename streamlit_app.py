@@ -126,14 +126,14 @@ if uploaded_cim and uploaded_excel:
             "formulas": formulas
         }
 
-    # Ask GPT to map values
+    # Proceed only if metrics are confirmed
     messages = [
         {"role": "system", "content": "You are a helpful assistant for populating Excel LBO models."},
         {"role": "user", "content": f"Excel metadata: {json.dumps(metadata)[:2000]}"},
-        {"role": "user", "content": f"CIM extracted financials: {json.dumps(cim_data)[:2000]}"},
-        {"role": "user", "content": "Map Revenue, EBITDA, CapEx, and Acquisitions to Excel cells. If multiple EBITDA options exist, ask me."}
+        {"role": "user", "content": f"CIM extracted financials (with confirmed metrics): {json.dumps(cim_data)[:2000]}"},
+        {"role": "user", "content": "Map Revenue, EBITDA, CapEx, and Acquisitions to Excel cells using the selected variants."}
     ]
-
+    
     with st.spinner("🤖 Determining where to write data in Excel..."):
         response = openai.chat.completions.create(
             model="gpt-4",
@@ -143,6 +143,7 @@ if uploaded_cim and uploaded_excel:
         gpt_mapping = response.choices[0].message.content
         st.subheader("📌 GPT Mapping Suggestions")
         st.code(gpt_mapping)
+
 
     # Allow manual download of the unmodified file for now
     output = BytesIO()
