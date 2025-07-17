@@ -44,7 +44,7 @@ class ExcelLBOAssistant:
 # Sample GPT integration
  openai.api_key = st.secrets["OPENAI"]["OPENAI_API_KEY"]
 
-assistant = ExcelLBOAssistant("TJC Practice Simple Model New (7).xlsx")
+assistant = ExcelLBOAssistant("TJC Practice Simple Model New (7) (2).xlsx")
 metadata = assistant.get_metadata()
 
 messages = [
