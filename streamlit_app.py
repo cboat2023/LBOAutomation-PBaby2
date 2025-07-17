@@ -89,6 +89,27 @@ if uploaded_cim and uploaded_excel:
     st.subheader("📈 Extracted Financial Data")
     st.json(cim_data)
 
+    # Step 1: Detect all candidate metrics (e.g., Revenue_Candidates, EBITDA_Candidates)
+    candidate_metrics = {key[:-11]: val for key, val in cim_data.items() if key.endswith("_Candidates")}
+    
+    user_selections = {}
+    
+    if candidate_metrics:
+        st.subheader("🧠 Multiple Metric Variants Found")
+        for metric, options_dict in candidate_metrics.items():
+            options = list(options_dict.keys())
+            selected = st.selectbox(f"Choose variant for {metric}:", options, key=metric)
+            user_selections[metric] = selected
+    
+        if st.button("✅ Confirm All Selections"):
+            for metric, selected_variant in user_selections.items():
+                cim_data[metric] = cim_data[f"{metric}_Candidates"][selected_variant]
+            st.success("✅ All metric selections confirmed.")
+        else:
+            st.warning("Please confirm all metric selections to proceed.")
+            st.stop()
+
+
     # Load Excel and extract metadata
     workbook = openpyxl.load_workbook(uploaded_excel)
     sheets = {name: workbook[name] for name in workbook.sheetnames}
