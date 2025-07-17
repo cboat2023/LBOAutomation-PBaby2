@@ -45,47 +45,15 @@ def extract_text(file):
 # Build GPT prompt
 def build_ai_prompt(text):
     return f"""
-You are analyzing OCR or extracted PDF text from a Confidential Information Memorandum (CIM) for a leveraged buyout model.
+You are analyzing OCR output from a Confidential Information Memorandum (CIM) for an LBO model.
 
-Your task is to extract **hardcoded financial data** into strict JSON format. DO NOT guess or infer. Only extract what is explicitly present.
+Extract these financials:
+1. Revenue (3 historical + 6 projected)
+2. EBITDA (group variants under EBITDA_Candidates)
+3. Maintenance CapEx
+4. Acquisition Count
 
-❌ DO NOT ask the user where to map the data. That is handled in another system.
-✅ Your job is ONLY to extract numbers in the following structure.
-
-### Financial Metrics to Extract:
-
-1. **Revenue** – Three most recent actual years + Six projected years
-2. **EBITDA** – Same structure
-3. **Maintenance CapEx** – Prefer "Maintenance CapEx" if available
-4. **Acquisition Count** – Count of acquisitions per year (if stated)
-
-### Structure:
-Sort years chronologically and assign as:
-
-- Revenue_Actual_1, Revenue_Actual_2, Revenue_Actual_3
-- Revenue_Proj_Y1 to Revenue_Proj_Y6
-- Same for other metrics
-
-Use:
-- Header_E17 → first of the 3 actual years (e.g., "2022")
-- Header_H17 → label: "LTM JUNE-22E"
-
-### If multiple versions (e.g., “Adj. EBITDA”, “Run-Rate EBITDA”), return:
-
-```json
-{{
-  "EBITDA_Candidates": {{
-    "Adj. EBITDA": {{
-      "Actual_1": 100,
-      "Proj_Y1": 110
-    }},
-    "Run Rate EBITDA": {{
-      "Actual_1": 90,
-      "Proj_Y1": 105
-    }}
-  }}
-}}
-
+Group metric variants and wait for user input if multiple appear.
 
 Text:
 {text}
