@@ -10,8 +10,8 @@ from openpyxl.utils import get_column_letter
 from io import BytesIO
 
 # ---- SETTINGS ----
-openai.api_key = st.secrets["OPENAI_API_KEY"]  # Add in Streamlit secrets or replace directly
-TEMPLATE_PATH = "lbo_template.xlsx"  # Replace with your Excel LBO model
+openai.api_key = st.secrets["OPENAI"]["OPENAI_API_KEY"]  # Add in Streamlit secrets or replace directly
+TEMPLATE_PATH = "TJC Practice Simple Model New (7) (2).xlsx"  # Replace with your Excel LBO model
 
 # ---- UTILS ----
 def extract_text_from_pdf(uploaded_file):
