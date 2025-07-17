@@ -43,8 +43,7 @@ class ExcelLBOAssistant:
     def save(self, output_path):
         self.workbook.save(output_path)
 
-openai.api_key = st.secrets["OPENAI"]["OPENAI_API_KEY"]
-client = openai.OpenAI(api_key=openai.api_key)  # or just openai.OpenAI() if globally set
+client = openai.OpenAI(api_key=st.secrets["OPENAI"]["OPENAI_API_KEY"])
 
 assistant = ExcelLBOAssistant("TJC Practice Simple Model New (7) (2).xlsx")
 metadata = assistant.get_metadata()
@@ -54,8 +53,6 @@ messages = [
     {"role": "user", "content": f"This is the metadata of the Excel model: {json.dumps(metadata)[:1000]}..."},
     {"role": "user", "content": "Check if there are any formula errors or unfilled EBITDA cells. Ask me which version of EBITDA to use if multiple exist."}
 ]
-
-client = openai.OpenAI()
 
 response = client.chat.completions.create(
     model="gpt-4",
