@@ -1,6 +1,8 @@
 import openpyxl
 import json
 import openai
+import streamlit as st
+
 
 class ExcelLBOAssistant:
     def __init__(self, template_path):
