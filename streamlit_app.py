@@ -45,27 +45,47 @@ def extract_text(file):
 # Build GPT prompt
 def build_ai_prompt(text):
     return f"""
-You are analyzing OCR output from a Confidential Information Memorandum (CIM) for an LBO model.
+You are analyzing OCR or extracted PDF text from a Confidential Information Memorandum (CIM) for a leveraged buyout model.
 
-Extract these financials:
+Your task is to extract **hardcoded financial data** into strict JSON format. DO NOT guess or infer. Only extract what is explicitly present.
 
-1. **Revenue** - Three most recent actual years + Six forward-looking years
-2. **EBITDA** - Same structure as Revenue
-3. **CapEx** 
-4. **Acquisition Count** - Count of planned acquisitions per projected year
+❌ DO NOT ask the user where to map the data. That is handled in another system.
+✅ Your job is ONLY to extract numbers in the following structure.
 
-### Year Extraction Instructions:
-- Identify all years tied to hardcoded financial values
-- Sort chronologically and use:
-  - Three earliest years for Actuals 
-  - Next six years for forward-looking values 
-  - If there is no info, make sure that when mapped to excel the cell becomes empty
+### Financial Metrics to Extract:
 
+1. **Revenue** – Three most recent actual years + Six projected years
+2. **EBITDA** – Same structure
+3. **Maintenance CapEx** – Prefer "Maintenance CapEx" if available
+4. **Acquisition Count** – Count of acquisitions per year (if stated)
 
-### Candidate Metric Handling:
-If multiple versions of a metric exist, ex: different ebitda or capex 
+### Structure:
+Sort years chronologically and assign as:
 
-Group metric variants and wait for user input if multiple appear.
+- Revenue_Actual_1, Revenue_Actual_2, Revenue_Actual_3
+- Revenue_Proj_Y1 to Revenue_Proj_Y6
+- Same for other metrics
+
+Use:
+- Header_E17 → first of the 3 actual years (e.g., "2022")
+- Header_H17 → label: "LTM JUNE-22E"
+
+### If multiple versions (e.g., “Adj. EBITDA”, “Run-Rate EBITDA”), return:
+
+```json
+{{
+  "EBITDA_Candidates": {{
+    "Adj. EBITDA": {{
+      "Actual_1": 100,
+      "Proj_Y1": 110
+    }},
+    "Run Rate EBITDA": {{
+      "Actual_1": 90,
+      "Proj_Y1": 105
+    }}
+  }}
+}}
+
 
 Text:
 {text}
