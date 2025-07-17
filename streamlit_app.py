@@ -32,7 +32,7 @@ Return as JSON with keys like Revenue_2021, EBITDA_2021, etc.
 Text:
 {raw_text[:4000]}  # Only send first 4000 tokens for demo
 """
-    response = openai.ChatCompletion.create(
+    response = openai.chat.completions.create(
         model="gpt-4",
         messages=[{"role": "user", "content": prompt}]
     )
